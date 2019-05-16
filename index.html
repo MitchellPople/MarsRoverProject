@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Mars Rover Images</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script>
+            $( document ).ready(function() {
+                
+                var templateHTML = $('#entry-template')[0].innerHTML;
+                var template = Handlebars.compile(templateHTML);
+                
+                
+                $("#solForm").submit( function(event) {
+                    event.preventDefault();
+                    var sol = $('#setSol').val();
+                    var url = "https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?api_key=Mha4qWuujYRhCAe8WKY2MKdwBNlXgK33JP8xmdyJ&sol=" + sol;
+                    $.getJSON( url, function( data ) {
+                        var result = template(data);
+                        $('#imgList').html(result);    
+                    });
+                });
+             });
+        </script>
+        <style>
+            img {
+                width:200px;
+            }
+            .entry{
+                float:left;
+                margin: 5px;
+            }
+        </style>
+        
+    </head>
+    <body>
+        <form id="solForm">
+
+            <label for="setSol">Please Enter Sol:</label>
+            <input id="setSol" name="Sol" required>
+            <button id="post" type="submit">Submit</button>
+
+        </form>
+        <div id = "imgList"></div>
+        <script id="entry-template" type="text/x-handlebars-template">
+            {{#each photos}}
+            <div class="entry">
+              <img src="{{img_src}}">
+              <div class="metadata">
+                Earth Date:{{earth_date}}<br>
+                Camera Name:{{camera.full_name}}
+              </div>
+            </div>
+            {{/each}}
+        </script>
+    </body>
+</html>
